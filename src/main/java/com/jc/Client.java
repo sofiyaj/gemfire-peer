@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.gj.demo;
+package com.jc;
 
 import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
 
 import java.util.Scanner;
 
+import com.jc.domain.Customer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +33,6 @@ import org.springframework.data.gemfire.listener.ContinuousQueryListenerContaine
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
-import org.gj.demo.domain.Customer;
 
 /**
  * The {@link Client} class is a Spring Boot, GemFire cache client application demonstrating how to
@@ -53,65 +53,16 @@ import org.gj.demo.domain.Customer;
  * @since 2.0.0
  */
 @SpringBootApplication
-@ClientCacheApplication(name = "GemFireContinuousQueryClient", subscriptionEnabled = true)
 @SuppressWarnings("unused")
 public class Client {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Client.class, args);
-		promptForInputToExit();
-	}
-
-	private static void promptForInputToExit() {
-		System.err.println("Press <ENTER> to exit");
 		new Scanner(System.in).nextLine();
 	}
+	/*private static void promptForInputToExit() {
+		System.err.println("Press <ENTER> to exit");
+		new Scanner(System.in).nextLine();
+	}*/
 
-	@Bean(name = "Customers")
-	ClientRegionFactoryBean<Long, Customer> customersRegion(GemFireCache gemfireCache) {
-
-		ClientRegionFactoryBean<Long, Customer> customers = new ClientRegionFactoryBean<>();
-
-		customers.setCache(gemfireCache);
-		customers.setClose(true);
-		customers.setShortcut(ClientRegionShortcut.PROXY);
-
-		return customers;
-	}
-
-	@Bean
-	ContinuousQueryListenerContainer continuousQueryListenerContainer(GemFireCache gemfireCache) {
-
-		Region<Long, Customer> customers = gemfireCache.getRegion("/Customers");
-
-		ContinuousQueryListenerContainer container = new ContinuousQueryListenerContainer();
-
-		container.setCache(gemfireCache);
-		container.setQueryListeners(asSet(
-			expensiveOrdersQuery(customers, 20)));
-
-		return container;
-	}
-
-
-	private ContinuousQueryDefinition expensiveOrdersQuery(
-			Region<Long, Customer> customers,  int total) {
-
-		String query = String.format("SELECT * FROM /Customers c WHERE c.getId().intValue() > %d", total);
-
-		return new ContinuousQueryDefinition("Expensive Orders", query,
-			newQueryListener(customers, "Expensive"));
-	}
-
-	private ContinuousQueryListener newQueryListener(Region<Long, Customer> customers, String qualifier) {
-
-		return event -> {
-
-			System.err.printf("new order!");
-		};
-	}
-
-	private Customer findByCustomerId(Region<Long, Customer> customers, Long customerId) {
-		return customers.get(customerId);
-	}
 }
