@@ -1,12 +1,15 @@
 package com.jc.service;
 
-import com.jc.dao.DataImport;
+import javax.annotation.PostConstruct;
+
 import org.apache.geode.cache.Region;
 import org.gj.demo.domain.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.gemfire.listener.ContinuousQueryDefinition;
 import org.springframework.data.gemfire.listener.ContinuousQueryListener;
 import org.springframework.stereotype.Service;
+
+import com.jc.dao.DataImport;
 
 /**
  * @Author: wangjie
@@ -17,17 +20,7 @@ import org.springframework.stereotype.Service;
 public class AppService {
     @Autowired
     DataImport dataImport;
-    public ContinuousQueryDefinition expensiveOrdersQuery(Region<Long, Customer> customers, int total) {
-        String query = String.format("SELECT * FROM /Customers c WHERE c.getId().intValue() > %d", total);
-        return new ContinuousQueryDefinition("Expensive Orders", query,
-                newQueryListener(customers, "Expensive"));
-    }
-    private ContinuousQueryListener newQueryListener(Region<Long, Customer> customers, String qualifier) {
-        return event -> {
-            System.err.printf("new order!");
-        };
-    }
-    public Customer findByCustomerId(Region<Long, Customer> customers, Long customerId) {
-        return customers.get(customerId);
+    public Customer findCustomerById(Long customerId) {
+        return dataImport.findCustomerById(customerId);
     }
 }

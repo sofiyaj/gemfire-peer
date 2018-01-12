@@ -23,8 +23,8 @@ public class AppController {
 
     @RequestMapping("/find")
     @ResponseBody
-    public void findByCustomerId(Region<Long, Customer> customers, Long customerId){
-        //appService.findByCustomerId((),2L);
+    public Customer findCustomerById(Long customerId){
+        return appService.findCustomerById(customerId);
     }
 
 }
