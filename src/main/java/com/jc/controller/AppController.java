@@ -1,6 +1,6 @@
 package com.jc.controller;
 
-import com.jc.domain.Customer;
+import org.gj.demo.domain.Customer;
 import com.jc.service.AppService;
 import org.apache.geode.cache.Region;
 import org.springframework.beans.factory.annotation.Autowired;

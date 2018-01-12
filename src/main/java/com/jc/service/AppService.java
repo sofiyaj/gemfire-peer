@@ -1,6 +1,6 @@
 package com.jc.service;
 
-import com.jc.domain.Customer;
+import org.gj.demo.domain.Customer;
 import org.apache.geode.cache.Region;
 import org.springframework.data.gemfire.listener.ContinuousQueryDefinition;
 import org.springframework.stereotype.Service;

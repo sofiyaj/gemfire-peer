@@ -1,6 +1,6 @@
 package com.jc.dao;
 
-import com.jc.domain.Customer;
+import org.gj.demo.domain.Customer;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
