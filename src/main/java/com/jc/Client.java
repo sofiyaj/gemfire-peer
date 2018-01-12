@@ -19,8 +19,6 @@ package com.jc;
 import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
 
 import java.util.Scanner;
-
-import com.jc.domain.Customer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

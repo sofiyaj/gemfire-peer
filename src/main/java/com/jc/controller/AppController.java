@@ -1,8 +1,8 @@
 package com.jc.controller;
 
-import com.jc.domain.Customer;
 import com.jc.service.AppService;
 import org.apache.geode.cache.Region;
+import org.gj.demo.domain.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
