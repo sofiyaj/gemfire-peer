@@ -15,14 +15,13 @@ import org.springframework.stereotype.Service;
  * @Date: Created in 16:05 2018/1/11
  */
 @Service
-public class AppServiceimpl implements AppService {
+public class AppServiceimpl  {
     @Autowired
     DataImport dataImport;
     public AppServiceimpl() {
         super();
     }
 
-    @Override
     public ContinuousQueryDefinition expensiveOrdersQuery(Region<Long, Customer> customers, int total) {
         String query = String.format("SELECT * FROM /Customers c WHERE c.getId().intValue() > %d", total);
         return new ContinuousQueryDefinition("Expensive Orders", query,
@@ -33,7 +32,7 @@ public class AppServiceimpl implements AppService {
             System.err.printf("new order!");
         };
     }
-    @Override
+
     public Customer findByCustomerId(Region<Long, Customer> customers, Long customerId) {
         return customers.get(customerId);
     }
