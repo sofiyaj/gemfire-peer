@@ -16,11 +16,13 @@
 
 package com.jc;
 
+import org.apache.geode.cache.query.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.gemfire.client.ClientRegionFactoryBean;
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
+import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.listener.ContinuousQueryDefinition;
 import org.springframework.data.gemfire.listener.ContinuousQueryListener;
 import org.springframework.data.gemfire.listener.ContinuousQueryListenerContainer;
@@ -29,27 +31,12 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 import org.gj.demo.domain.Customer;
 import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
-
 /**
- * The {@link Client} class is a Spring Boot, GemFire cache client application
- * demonstrating how to register GemFire Continuous Queries (CQ) using Spring
- * Data GemFire's {@link ContinuousQueryListenerContainer} in JavaConfig.
- *
- * @author John Blum
- * @see org.springframework.boot.SpringApplication
- * @see org.springframework.boot.autoconfigure.SpringBootApplication
- * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
- * @see org.springframework.data.gemfire.examples.domain.Customer
- * @see org.springframework.data.gemfire.examples.domain.Order
- * @see org.springframework.data.gemfire.examples.domain.Product
- * @see org.springframework.data.gemfire.listener.ContinuousQueryDefinition
- * @see org.springframework.data.gemfire.listener.ContinuousQueryListener
- * @see org.springframework.data.gemfire.listener.ContinuousQueryListenerContainer
- * @see <a href=
- *      "http://gemfire.docs.pivotal.io/geode/developing/continuous_querying/chapter_overview.html">Continuous
- *      Query</a>
- * @since 2.0.0
- */
+ *@Description:
+ *@Date: 16:52 \
+ *@params:
+ *@return:
+*/
 @SpringBootApplication
 @ClientCacheApplication(name = "GemFireContinuousQueryClient", subscriptionEnabled = true)
 @SuppressWarnings("unused")
@@ -68,7 +55,8 @@ public class Application {
 		Region<Long, Customer> customers = gemfireCache.getRegion("/Customers");
 		ContinuousQueryListenerContainer container = new ContinuousQueryListenerContainer();
 		container.setCache(gemfireCache);
-		container.setQueryListeners(asSet(expensiveOrdersQuery(customers, 20)));
+		//container.setQueryListeners(asSet(expensiveOrdersQuery(customers, 20)));
+		container.setQueryListeners(asSet(ageQueryDefinition(customers, 15,35)));
 		return container;
 	}
 
@@ -77,19 +65,18 @@ public class Application {
 		return new ContinuousQueryDefinition("Expensive Orders", query, newQueryListener(customers, "Expensive"));
 	}
 
-	private ContinuousQueryListener newQueryListener(Region<Long, Customer> customers, String qualifier) {
-		return event -> {
-			System.err.printf("new order!");
-		};
+	private ContinuousQueryDefinition ageQueryDefinition(Region<Long, Customer> customers, int ageFrom,int ageTo){
+		String query = String.format("SELECT * FROM /Customers c WHERE c.getAge().intValue() > %d AND c.getAge().intValue() < %d ", ageFrom,ageTo);
+		return new ContinuousQueryDefinition("Young Query ",query,newQueryListener(customers,"Young Query"));
 	}
 
+	private ContinuousQueryListener newQueryListener(Region<Long, Customer> customers, String qualifier) {
+		return event -> {
+			System.err.printf("new order!" + event.toString());
+		};
+	}
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
-	/*
-	 * private static void promptForInputToExit() {
-	 * System.err.println("Press <ENTER> to exit"); new
-	 * Scanner(System.in).nextLine(); }
-	 */
 
 }
